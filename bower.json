@@ -1,0 +1,20 @@
+{
+  "name": "frame.js",
+  "version": "0.1",
+  "homepage": "https://github.com/ksheedlo/frame.js",
+  "authors": [
+    "Ken Sheedlo <ovrkenthousand@gmail.com>"
+  ],
+  "description": "Edit GIFs in the browser with style, no matter how you pronounce it.",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "chai": "~1.8.1"
+  }
+}
