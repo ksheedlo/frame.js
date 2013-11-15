@@ -1,21 +1,11 @@
 'use strict';
 
-/*exported dataStream, writeStream, jsArray, arrayFind*/
+/*exported dataStream, writeStream, jsArray*/
 
 var ArrayBuffer_ = window.ArrayBuffer,
   DataView_ = window.DataView,
   Uint8Array_ = window.Uint8Array,
   Uint16Array_ = window.Uint16Array;
-
-function arrayFind(arr, test) {
-  var ctx = {};
-  arr.forEach(function (elt, i) {
-    if (this.index === undefined && test(elt)) {
-      this.index = i;
-    }
-  }, ctx);
-  return ctx.index;
-}
 
 function stringToDataView(s) {
   var view = new DataView_(new ArrayBuffer_(s.length)), i, arr;
@@ -119,11 +109,11 @@ function writeStream(size) {
 
   writeU16 = function (val) {
     try {
-      view.setUint16(offset, val);
+      view.setUint16(offset, val, true);
       offset += 2;
     } catch (e) {
       resize(size * 2);
-      view.setUint16(offset, val);
+      view.setUint16(offset, val, true);
       offset += 2;
     }
   };

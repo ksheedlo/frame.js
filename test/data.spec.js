@@ -1,7 +1,30 @@
 'use strict';
 
-/*global describe, it, chai, dataStream, jsArray*/
+/*global describe, it, chai, dataStream, writeStream, jsArray*/
 /*jshint -W030*/
+describe('jsArray', function () {
+
+  var expect = chai.expect;
+
+  it('should create a copy of an existing array', function () {
+    var foo = [1, 2, 3],
+      bar = jsArray(foo);
+
+    foo[2] = 42;
+    expect(bar).to.eql([1, 2, 3]);
+  });
+
+  it('should convert the arguments object into an array', function () {
+    expect((function() {
+      return jsArray(arguments);
+    })('test1', 'test2', 'test3')).to.eql(['test1', 'test2', 'test3']);
+  });
+
+  it('should convert typed arrays to ordinary Javascript arrays', function () {
+    var bites = new Uint8Array([2, 3, 5, 7, 9]);
+    expect(jsArray(bites)).to.eql([2, 3, 5, 7, 9]);
+  });
+});
 
 describe('data streams', function () {
   
@@ -63,5 +86,72 @@ describe('data streams', function () {
     expect(jsArray(arr)).to.eql([1, 2, 3]);
   });
 });
-/*jshint +W030*/
 
+describe('write streams', function () {
+
+  var expect = chai.expect;
+
+  it('should write the data as 8-bit unsigned integers', function () {
+    var stream = writeStream(16), data;
+    stream.writeU8(42);
+    stream.writeU8(99);
+
+    data = stream.getData();
+    expect(data.getU8()).to.equal(42);
+    expect(data.getU8()).to.equal(99);
+  });
+
+  it('should write the data as 16-bit unsigned integers', function () {
+    var stream = writeStream(16), data;
+    stream.writeU16(1337);
+    stream.writeU16(9999);
+
+    data = stream.getData();
+    expect(data.getU16()).to.equal(1337);
+    expect(data.getU16()).to.equal(9999);
+  });
+
+  it('should resize itself automatically', function () {
+    var stream = writeStream(4), data;
+    stream.writeU16(42);
+    stream.writeU16(9999);
+    stream.writeU16(31337);
+
+    data = stream.getData();
+    data.skip(4);
+    expect(data.getU16()).to.equal(31337);
+  });
+
+  it('should get the data as a dataStream', function () {
+    var stream = writeStream(16), data;
+    stream.writeU8(0x53);
+    stream.writeU8(0x57);
+    stream.writeU8(0x41);
+    stream.writeU8(0x47);
+
+    data = stream.getData();
+    expect(data.getString(4)).to.equal('SWAG');
+  });
+
+  it('should get the data as a Uint8Array', function () {
+    var stream = writeStream(16), data;
+    stream.writeU8(9);
+    stream.writeU8(8);
+    stream.writeU8(7);
+    stream.writeU8(6);
+
+    data = stream.getDataAsU8Array();
+    expect(data[2]).to.equal(7);
+  });
+
+  it('should get the data as a Uint16Array', function () {
+    var stream = writeStream(16), data;
+    stream.writeU16(9999);
+    stream.writeU16(31337);
+    stream.writeU16(1729);
+
+    data = stream.getDataAsU16Array();
+    expect(data[1]).to.equal(31337);
+  });
+});
+/*jshint +W030*/
