@@ -22,7 +22,9 @@ module.exports = function (grunt) {
         options: {
           banner: LICENSE + "(function (window, undefined) {\n'use strict';\n",
           process: function (src) {
-            return src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
+            return src
+              .replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1')
+              .replace(/\/\*\s*(global|exported)\s+.*\*\/\s*/g, '');
           },
           footer: "\n})(window);"
         },
@@ -54,7 +56,7 @@ module.exports = function (grunt) {
             max_line_len: 500
           },
           sourceMap: 'dist/frame.min.js.map',
-          sourceMapPrefix: 1,
+          sourceMappingURL: 'frame.min.js.map',
           preserveComments: 'some'
         },
         files: {
